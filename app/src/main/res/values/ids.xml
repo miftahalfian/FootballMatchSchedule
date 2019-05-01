@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item type="id" name="app_bar"/>
+    <item type="id" name="league_logo"/>
+    <item type="id" name="league_name"/>
+    <item type="id" name="league_id"/>
+    <item type="id" name="league_desc"/>
+    <item type="id" name="toolbar"/>
+</resources>

@@ -107,7 +107,6 @@
                 app:layout_constraintTop_toTopOf="@+id/img_away_logo"
                 app:layout_constraintBottom_toBottomOf="@+id/img_away_logo"/>
         <TextView
-                android:id="@+id/tv_separator"
                 android:text="@string/score_separator"
                 android:textSize="40sp"
                 android:textColor="@android:color/black"

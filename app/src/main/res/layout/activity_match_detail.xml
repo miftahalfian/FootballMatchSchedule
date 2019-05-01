@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
-        tools:context="com.solitelab.footballmatchschedule.MatchDetailActivity">
+        tools:context="com.solitelab.footballmatchschedule.ui.MatchDetailActivity">
 
     <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"
@@ -16,7 +16,6 @@
             android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.design.widget.CollapsingToolbarLayout
-                android:id="@+id/toolbar_layout"
                 android:fitsSystemWindows="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

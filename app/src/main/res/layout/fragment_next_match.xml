@@ -2,7 +2,7 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.solitelab.footballmatchschedule.fragments.NextMatchFragment">
+             tools:context=".ui.fragments.NextMatchFragment">
 
     <include layout="@layout/match_list_layout"/>
     <include layout="@layout/no_result_layout"

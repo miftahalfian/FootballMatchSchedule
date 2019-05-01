@@ -4,7 +4,6 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent">
     <TextView
-            android:id="@+id/lineupTitle"
             android:text="@string/lineup_title"
             android:textColor="@android:color/white"
             android:textSize="20sp"
@@ -30,7 +29,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/activity_horizontal_margin"/>
         <TextView
-                android:id="@+id/goalkeeperTitle"
                 android:text="@string/goalkeeper_title"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
@@ -76,7 +74,6 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:ellipsize="end"/>
         <TextView
-                android:id="@+id/defenseTitle"
                 android:text="@string/defense_title"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
@@ -121,7 +118,6 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:ellipsize="end"/>
         <TextView
-                android:id="@+id/midfieldTitle"
                 android:text="@string/midfield_title"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
@@ -166,7 +162,6 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:ellipsize="end"/>
         <TextView
-                android:id="@+id/forwardTitle"
                 android:text="@string/forward_title"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"
@@ -212,7 +207,6 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:ellipsize="end"/>
         <TextView
-                android:id="@+id/substituteTitle"
                 android:text="@string/substitute_title"
                 android:textColor="@android:color/black"
                 android:textSize="18sp"

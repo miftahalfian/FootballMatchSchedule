@@ -84,7 +84,6 @@
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/vs"
             app:layout_constraintEnd_toStartOf="@+id/smallAwayLogo"
             android:layout_marginEnd="8dp"
             app:layout_constraintStart_toEndOf="@+id/smallHomeLogo"

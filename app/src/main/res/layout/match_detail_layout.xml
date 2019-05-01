@@ -5,7 +5,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
     <TextView
-            android:id="@+id/summaryTitle"
             android:text="@string/match_summary"
             android:textColor="@android:color/white"
             android:textSize="20sp"

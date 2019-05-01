@@ -11,30 +11,32 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".ui.LeagueDetailActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
+        </activity>
         <activity
-                android:name=".MatchDetailActivity"
-                android:label="@string/title_activity_match_detail"
+                android:name=".ui.MatchDetailActivity"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-                android:name=".SearchActivity"
-                android:parentActivityName=".MatchActivity">
+                android:name=".ui.SearchActivity"
+                android:parentActivityName=".ui.MatchActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MatchActivity"/>
+                    android:value=".ui.MatchActivity"/>
         </activity>
         <activity
-                android:name=".MatchActivity"
-                android:parentActivityName=".MainActivity"
+                android:name=".ui.MatchActivity"
+                android:parentActivityName=".ui.MainActivity"
                 android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".MainActivity"/>
+                    android:value=".ui.MainActivity"/>
             <meta-data
                     android:name="android.app.default_searchable"
                     android:value=".SearchActivity"/>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
