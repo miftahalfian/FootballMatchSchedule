@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        app:layout_collapseMode="parallax">
+
+    <ImageView
+            android:id="@+id/img_league_logo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            app:srcCompat="@drawable/english_premier_league"
+            android:scaleType="fitCenter"
+            android:transitionName="@string/league_logo"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="8dp" app:layout_constraintTop_toTopOf="@+id/tv_league_name"
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="@+id/tv_league_website"/>
+    <TextView
+            android:id="@+id/tv_league_name"
+            android:text="@string/league_name"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            app:layout_constraintStart_toEndOf="@+id/img_league_logo" android:layout_marginTop="56dp"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+            android:id="@+id/tv_league_alternative"
+            android:text="@string/alternative"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_small_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            app:layout_constraintTop_toBottomOf="@+id/tv_league_name"
+            app:layout_constraintStart_toEndOf="@+id/img_league_logo"/>
+
+    <TextView
+            android:id="@+id/tv_league_country"
+            android:text="@string/country"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_small_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            app:layout_constraintTop_toBottomOf="@+id/tv_league_alternative"
+            app:layout_constraintStart_toEndOf="@+id/img_league_logo"/>
+
+    <TextView
+            android:id="@+id/tv_league_formed"
+            android:text="@string/formed"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_small_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            app:layout_constraintTop_toBottomOf="@+id/tv_league_country"
+            app:layout_constraintStart_toEndOf="@+id/img_league_logo"/>
+
+    <TextView
+            android:id="@+id/tv_league_website"
+            android:text="@string/website"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/activity_small_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            app:layout_constraintTop_toBottomOf="@+id/tv_league_formed"
+            app:layout_constraintStart_toEndOf="@+id/img_league_logo"
+    />
+
+</android.support.constraint.ConstraintLayout>
