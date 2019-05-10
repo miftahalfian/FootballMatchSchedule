@@ -4,27 +4,24 @@ import android.app.ActivityOptions
 import android.os.Bundle
 import android.support.v4.view.ViewCompat
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
 import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.R
 import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
 import com.solitelab.footballmatchschedule.data.mvp.model.Match
 import com.solitelab.footballmatchschedule.data.mvp.search.SearchPresenter
+import com.solitelab.footballmatchschedule.ui.layout.MatchListUI
 import com.solitelab.footballmatchschedule.utils.invisible
 import com.solitelab.footballmatchschedule.utils.visible
-import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.match_list_layout.*
 import org.jetbrains.anko.appcompat.v7.coroutines.onQueryTextListener
 import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.support.v4.onRefresh
-
 
 
 class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.data.mvp.search.SearchView {
@@ -33,9 +30,11 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
     private lateinit var presenter: SearchPresenter
     private var queryString: String? = ""
 
+    private val ui = MatchListUI()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_search)
+        ui.setContentView(this)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Search Football Match"
@@ -43,14 +42,13 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
         val request = ApiRepository()
         val gson = Gson()
         presenter = SearchPresenter(this, gson, request)
-        no_result_layout.invisible()
+        ui.noResult.invisible()
 
-        matchList.layoutManager = LinearLayoutManager(this, LinearLayout.VERTICAL, false)
-        matchList.adapter = MatchAdapter {
+        ui.matchList.adapter = MatchAdapter {
             match, homeLogo, awayLogo, homeSrc, awaySrc -> goToResult(match, homeLogo, awayLogo, homeSrc, awaySrc)
         }
 
-        swipeContainer.onRefresh {
+        ui.swipeContainer.onRefresh {
             presenter.search(queryString)
         }
 
@@ -91,24 +89,36 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
             }
         }
 
+        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionExpand(item: MenuItem?): Boolean {
+                // TODO: do something...
+                return true
+            }
+
+            override fun onMenuItemActionCollapse(item: MenuItem?): Boolean {
+                finish()
+                return true
+            }
+        })
+
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onLoadData() {
-        swipeContainer.isRefreshing = true
+        ui.swipeContainer.isRefreshing = true
     }
 
     override fun onDataLoaded(matches: List<Match>?) {
-        swipeContainer.isRefreshing = false
-        (matchList.adapter as MatchAdapter).clear()
+        ui.swipeContainer.isRefreshing = false
+        (ui.matchList.adapter as MatchAdapter).clear()
         if (matches != null) {
-            matchList.visible()
-            (matchList.adapter as MatchAdapter).setData(matches)
-            no_result_layout.invisible()
+            ui.matchList.visible()
+            (ui.matchList.adapter as MatchAdapter).setData(matches)
+            ui.noResult.invisible()
         }
         else {
-            matchList.invisible()
-            no_result_layout.visible()
+            ui.matchList.invisible()
+            ui.noResult.visible()
         }
     }
 

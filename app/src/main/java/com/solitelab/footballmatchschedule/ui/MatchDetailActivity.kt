@@ -4,18 +4,20 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.AppBarLayout
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.R
-import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.data.api.TheSportDBApi
+import com.solitelab.footballmatchschedule.data.mvp.matchdetail.MatchDetailPresenter
+import com.solitelab.footballmatchschedule.data.mvp.matchdetail.MatchDetailView
 import com.solitelab.footballmatchschedule.data.mvp.model.Match
 import com.solitelab.footballmatchschedule.utils.MatchEvent
-import com.solitelab.footballmatchschedule.data.mvp.model.TeamResult
 import com.solitelab.footballmatchschedule.utils.formatTo
 import com.solitelab.footballmatchschedule.utils.toDate
 import com.squareup.picasso.Picasso
@@ -23,13 +25,18 @@ import kotlinx.android.synthetic.main.activity_match_detail.*
 import kotlinx.android.synthetic.main.content_match_detail.*
 import kotlinx.android.synthetic.main.lineup_layout.*
 import kotlinx.android.synthetic.main.match_appbar.*
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.uiThread
 
-class MatchDetailActivity : AppCompatActivity() {
+class MatchDetailActivity : AppCompatActivity(), MatchDetailView {
     var match : Match? = null
-    val gson = Gson()
+    private val presenter : MatchDetailPresenter = MatchDetailPresenter(this)
+    private var isFavorite = false
+    private var menuItem: Menu? = null
+
+    var homeBigScaleX = 0.0f
+    var homeBigScaleY = 0.0f
+    var awayBigScaleY = 0.0f
+    var awayBigScaleX = 0.0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +79,7 @@ class MatchDetailActivity : AppCompatActivity() {
             Picasso.get().load(homeSrc).into(smallHomeLogo)
         }
         else {
-            loadTeamBadge(match?.homeTeamID) {
-                Picasso.get().load(it).into(homeBigLogo)
-                Picasso.get().load(it).into(smallHomeLogo)
-            }
+            presenter.loadTeamBadge(match?.homeTeamID, "home")
         }
 
         if (!awaySrc.isNullOrEmpty()) {
@@ -83,10 +87,7 @@ class MatchDetailActivity : AppCompatActivity() {
             Picasso.get().load(awaySrc).into(smallAwayLogo)
         }
         else {
-            loadTeamBadge(match?.awayTeamID) {
-                Picasso.get().load(it).into(awayBigLogo)
-                Picasso.get().load(it).into(smallAwayLogo)
-            }
+            presenter.loadTeamBadge(match?.awayTeamID, "away")
         }
 
         homeGoalKeeper.text = match?.homeGoalKeeper?.replace(";", ",\n")?.trim()
@@ -225,22 +226,76 @@ class MatchDetailActivity : AppCompatActivity() {
             }
         }
 
+        homeBigScaleX = homeBigLogo.scaleX
+        homeBigScaleY = homeBigLogo.scaleY
+        awayBigScaleX = awayBigLogo.scaleX
+        awayBigScaleY = awayBigLogo.scaleY
+
         app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, _ ->
             val offsetAlpha = (appBarLayout.y / appBarLayout.totalScrollRange)
             toolbar.setTitleTextColor(Color.argb(((offsetAlpha * -1) * 255).toInt(), 255, 255, 255))
+            homeBigLogo.scaleX = homeBigScaleX * (1 - offsetAlpha * -1)
+            homeBigLogo.scaleY = homeBigScaleY * (1 - offsetAlpha * -1)
+            awayBigLogo.scaleX = awayBigScaleX * (1 - offsetAlpha * -1)
+            awayBigLogo.scaleY = awayBigScaleY * (1 - offsetAlpha * -1)
         })
+
+        isFavorite = presenter.isFavorite(match)
+
     }
 
-    private fun loadTeamBadge(id : String?, listener : (String?) -> Unit) {
-        doAsync {
-            val data = gson.fromJson(
-                ApiRepository().doRequest(TheSportDBApi.getTeamDetail(id)),
-                TeamResult::class.java
-            )
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.menu_fav, menu)
+        menuItem = menu
 
-            uiThread {
-                listener(data.teams[0].badge)
+        setFavorite()
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean =
+        when (item.itemId) {
+            android.R.id.home -> {
+                finishAfterTransition()
+                true
+            }
+            R.id.favorite -> {
+                switchFavorite()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+
+    override fun onBadgeLoaded(imgSrc: String?, tag: String) {
+        when(tag) {
+            "home" -> {
+                Picasso.get().load(imgSrc).into(homeBigLogo)
+                Picasso.get().load(imgSrc).into(smallHomeLogo)
+            }
+            "away" -> {
+                Picasso.get().load(imgSrc).into(awayBigLogo)
+                Picasso.get().load(imgSrc).into(smallAwayLogo)
             }
         }
     }
+
+    private fun switchFavorite() {
+        isFavorite = !isFavorite
+
+        setFavorite()
+
+        if (isFavorite) presenter.addToFavorite(match) else presenter.removeFromFavorite(match)
+    }
+
+    private fun setFavorite() {
+        menuItem?.getItem(0)?.icon = ContextCompat.getDrawable(
+            this,
+            if (isFavorite) R.drawable.ic_favorite else R.drawable.ic_favorite_border)
+    }
+
+    fun getRootView() : ViewGroup {
+        return find<ViewGroup>(android.R.id.content).getChildAt(0) as ViewGroup
+    }
+
 }

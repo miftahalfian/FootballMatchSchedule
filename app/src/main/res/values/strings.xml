@@ -10,7 +10,6 @@
     <string name="score_separator">:</string>
     <string name="initial_score">0</string>
     <string name="home_team">Home Team</string>
-    <string name="away_team">Away Team</string>
     <string name="lineup_title">LINEUPS</string>
     <string name="goalkeeper_title">GOALKEEPER</string>
     <string name="player_name_template">Player Name 1 Player Name 2 Player Name 3 Player Name 4 Player Name 5</string>
@@ -165,4 +164,9 @@
     </string>
     <string name="description">Description</string>
     <string name="detail">Detail</string>
+    <string name="favorite">Favorite</string>
+    <string name="favorite_match">Favorite Match</string>
+    <string name="title_activity_favorite">FavoriteActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
 </resources>

@@ -11,32 +11,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
-import com.google.gson.Gson
+
 import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
-import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.data.mvp.match.lastmatch.LastMatchPresenter
-import com.solitelab.footballmatchschedule.data.mvp.match.lastmatch.LastMatchView
-import com.solitelab.footballmatchschedule.data.mvp.model.League
+import com.solitelab.footballmatchschedule.data.mvp.favorite.FavoriteMatchPresenter
+import com.solitelab.footballmatchschedule.data.mvp.favorite.FavoriteMatchView
 import com.solitelab.footballmatchschedule.data.mvp.model.Match
 import com.solitelab.footballmatchschedule.ui.MatchDetailActivity
 import com.solitelab.footballmatchschedule.ui.layout.MatchList
 import com.solitelab.footballmatchschedule.ui.layout.NoResult
 import com.solitelab.footballmatchschedule.utils.gone
-import com.solitelab.footballmatchschedule.utils.invisible
 import com.solitelab.footballmatchschedule.utils.visible
 import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.support.v4.UI
-import org.jetbrains.anko.support.v4.defaultSharedPreferences
 import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.onRefresh
 
-class LastMatchFragment : Fragment(), LastMatchView {
-    private lateinit var presenter : LastMatchPresenter
+class FavoriteLastMatchFragment : Fragment(), FavoriteMatchView {
     private lateinit var swipeContainer : SwipeRefreshLayout
     private lateinit var matchList : RecyclerView
     private lateinit var noResultLayout : LinearLayout
-    lateinit var league: League
+    private lateinit var presenter: FavoriteMatchPresenter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,26 +64,21 @@ class LastMatchFragment : Fragment(), LastMatchView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val json = defaultSharedPreferences.getString("current_league", "")
-        league = Gson().fromJson(json, League::class.java)
-
         matchList.adapter = MatchAdapter {
                 match, homeLogo, awayLogo, homeSrc, awaySrc -> goToDetail(match, homeLogo, awayLogo, homeSrc, awaySrc)
         }
 
-        swipeContainer.onRefresh {
-            presenter.getLastMatch(league.id)
-        }
+        presenter = FavoriteMatchPresenter(this)
+        presenter.loadLastMatchFavorite(context)
 
-        val request = ApiRepository()
-        val gson = Gson()
-        presenter = LastMatchPresenter(this, gson, request)
-        presenter.getLastMatch(league.id)
+        swipeContainer.onRefresh {
+            presenter.loadLastMatchFavorite(context)
+        }
 
         noResultLayout.gone()
     }
 
-    private fun goToDetail(match:Match, homeLogo:ImageView, awayLogo:ImageView, homeSrc:String, awaySrc:String) {
+    private fun goToDetail(match: Match, homeLogo: ImageView, awayLogo: ImageView, homeSrc: String, awaySrc: String) {
         val pairs = ArrayList<android.util.Pair<View, String>>()
         val pairHome = android.util.Pair.create<View, String>(homeLogo, ViewCompat.getTransitionName(homeLogo)!!)
         val pairAway = android.util.Pair.create<View, String>(awayLogo, ViewCompat.getTransitionName(awayLogo)!!)
@@ -113,13 +103,21 @@ class LastMatchFragment : Fragment(), LastMatchView {
     override fun onDataLoaded(matches: List<Match>) {
         swipeContainer.isRefreshing = false
         (matchList.adapter as MatchAdapter).setData(matches)
-        matchList.visible()
-        noResultLayout.gone()
+
+        if (matches.isNotEmpty()) {
+            matchList.visible()
+            noResultLayout.gone()
+        }
+        else {
+            matchList.gone()
+            noResultLayout.visible()
+        }
     }
 
-    override fun onLoadFailed() {
-        swipeContainer.isRefreshing = false
-        matchList.invisible()
-        noResultLayout.visible()
+    override fun onResume() {
+        super.onResume()
+
+        presenter.loadLastMatchFavorite(context)
     }
+
 }
