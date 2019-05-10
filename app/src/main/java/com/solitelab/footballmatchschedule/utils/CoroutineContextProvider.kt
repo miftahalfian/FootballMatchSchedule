@@ -1,4 +1,4 @@
-package com.solitelab.footballmatchschedule
+package com.solitelab.footballmatchschedule.utils
 
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext

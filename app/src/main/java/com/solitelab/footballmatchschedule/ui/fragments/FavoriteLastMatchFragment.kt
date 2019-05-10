@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 
 import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
 import com.solitelab.footballmatchschedule.data.mvp.favorite.FavoriteMatchPresenter
@@ -70,9 +71,11 @@ class FavoriteLastMatchFragment : Fragment(), FavoriteMatchView {
 
         presenter = FavoriteMatchPresenter(this)
         presenter.loadLastMatchFavorite(context)
+        EspressoIdlingResource.setIdleState(false)
 
         swipeContainer.onRefresh {
             presenter.loadLastMatchFavorite(context)
+            EspressoIdlingResource.setIdleState(false)
         }
 
         noResultLayout.gone()
@@ -112,6 +115,7 @@ class FavoriteLastMatchFragment : Fragment(), FavoriteMatchView {
             matchList.gone()
             noResultLayout.visible()
         }
+        EspressoIdlingResource.setIdleState(false)
     }
 
     override fun onResume() {

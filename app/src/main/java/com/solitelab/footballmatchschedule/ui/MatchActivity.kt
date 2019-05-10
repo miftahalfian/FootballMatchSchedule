@@ -15,6 +15,7 @@ import android.text.style.UnderlineSpan
 import android.view.Menu
 import android.view.MenuItem
 import com.google.gson.Gson
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 import com.solitelab.footballmatchschedule.R
 import com.solitelab.footballmatchschedule.data.adapter.MatchPageAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository

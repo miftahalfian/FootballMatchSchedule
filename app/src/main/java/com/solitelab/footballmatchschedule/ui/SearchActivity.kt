@@ -10,6 +10,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import com.google.gson.Gson
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 import com.solitelab.footballmatchschedule.R
 import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
@@ -49,6 +50,7 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
         }
 
         ui.swipeContainer.onRefresh {
+            EspressoIdlingResource.setIdleState(false)
             presenter.search(queryString)
         }
 
@@ -83,8 +85,10 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
 
         searchView.onQueryTextListener {
             onQueryTextSubmit {
+                queryString = it
                 presenter.search(it)
                 queryString = it
+                EspressoIdlingResource.setIdleState(false)
                 true
             }
         }
@@ -120,6 +124,7 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
             ui.matchList.invisible()
             ui.noResult.visible()
         }
+        EspressoIdlingResource.setIdleState(true)
     }
 
 }

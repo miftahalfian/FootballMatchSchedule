@@ -1,18 +1,13 @@
 package com.solitelab.footballmatchschedule.utils
 
-import android.util.Log
 import android.view.View
-import android.widget.ImageView
 import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
 import com.solitelab.footballmatchschedule.data.api.TheSportDBApi
 import com.solitelab.footballmatchschedule.data.mvp.model.TeamResult
-import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import java.text.SimpleDateFormat
 import java.util.*
 

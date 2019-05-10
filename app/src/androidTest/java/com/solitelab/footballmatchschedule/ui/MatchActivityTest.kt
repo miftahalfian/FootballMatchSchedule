@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.onView
 import android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu
+import android.support.test.espresso.IdlingRegistry
 import android.support.test.espresso.action.ViewActions.click
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.RecyclerViewActions
@@ -11,10 +12,13 @@ import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.v7.widget.RecyclerView
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 import com.solitelab.footballmatchschedule.R
 import com.solitelab.footballmatchschedule.R.id.*
 import com.solitelab.footballmatchschedule.Util.withIndex
 import com.solitelab.footballmatchschedule.data.mvp.model.League
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,6 +43,11 @@ class MatchActivityTest {
             }
         }
 
+    @Before
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.idlingResource)
+    }
+
     @Test
     fun leagueDetailTest() {
         //cek apakah logo ditampilkan
@@ -50,12 +59,10 @@ class MatchActivityTest {
             .check(matches(withText("English Premier League")))
 
         //buka menu action bar
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getContext())
+        openActionBarOverflowOrOptionsMenu(mActivityRule.activity)
 
         //jika ada menu yg ada tulisannya Detail, diklik
         onView(withText("Detail")).perform(click())
-        
-        Thread.sleep(1000)
 
         //cek apakah di nama liga ada tulisan English Premier League
         onView(withId(league_name)).check(matches(withText("English Premier League")))
@@ -63,9 +70,6 @@ class MatchActivityTest {
 
     @Test
     fun lastMatchRecyclerViewTest() {
-        //tunggu sampai loading selesai, kurang lebih 10 detik
-        Thread.sleep(10000)
-
         //cek apakah view dengan id match_list yg ke index-0 tampil di layar
         onView(withIndex(withId(match_list), 0))
             .check(matches(isDisplayed()))
@@ -84,9 +88,6 @@ class MatchActivityTest {
         //klik tab NEXT MATCH
         onView(withText("NEXT MATCH")).perform(click())
 
-        //tunggu sampai loading selesai, kurang lebih 10 detik
-        Thread.sleep(10000)
-
         //cek apakah view dengan id match_list yg ke index-0 tampil di layar
         onView(withIndex(withId(match_list), 1))
             .check(matches(isDisplayed()))
@@ -100,5 +101,8 @@ class MatchActivityTest {
             .perform(RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(5, click()))
     }
 
-
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.idlingResource)
+    }
 }

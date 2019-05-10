@@ -4,14 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 data class Team(
     @SerializedName("strTeam")
-    val teamName : String? = null,
-
-    @SerializedName("strDescriptionEN")
-    val description : String? = null,
+    val teamName : String?,
 
     @SerializedName("strCountry")
-    val country : String? = null,
+    val country : String?,
 
     @SerializedName("strTeamBadge")
-    val badge : String? = null
+    val badge : String?,
+
+    @SerializedName("intFormedYear")
+    val formedYear : String?,
+
+    @SerializedName("strStadium")
+    val stadium: String?,
+
+    @SerializedName("strStadiumThumb")
+    val stadiumThumb: String?,
+
+    @SerializedName("strDescriptionEN")
+    val description : String?
 )

@@ -1,7 +1,7 @@
 package com.solitelab.footballmatchschedule.data.mvp.match.nextmatch
 
 import com.google.gson.Gson
-import com.solitelab.footballmatchschedule.CoroutineContextProvider
+import com.solitelab.footballmatchschedule.utils.CoroutineContextProvider
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
 import com.solitelab.footballmatchschedule.data.api.TheSportDBApi
 import com.solitelab.footballmatchschedule.data.mvp.model.MatchResult

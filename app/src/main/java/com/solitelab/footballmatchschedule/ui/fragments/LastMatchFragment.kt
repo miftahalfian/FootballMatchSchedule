@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.google.gson.Gson
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
 import com.solitelab.footballmatchschedule.data.mvp.match.lastmatch.LastMatchPresenter
@@ -77,12 +78,14 @@ class LastMatchFragment : Fragment(), LastMatchView {
         }
 
         swipeContainer.onRefresh {
+            EspressoIdlingResource.setIdleState(false)
             presenter.getLastMatch(league.id)
         }
 
         val request = ApiRepository()
         val gson = Gson()
         presenter = LastMatchPresenter(this, gson, request)
+        EspressoIdlingResource.setIdleState(false)
         presenter.getLastMatch(league.id)
 
         noResultLayout.gone()
@@ -115,11 +118,13 @@ class LastMatchFragment : Fragment(), LastMatchView {
         (matchList.adapter as MatchAdapter).setData(matches)
         matchList.visible()
         noResultLayout.gone()
+        EspressoIdlingResource.setIdleState(true)
     }
 
     override fun onLoadFailed() {
         swipeContainer.isRefreshing = false
         matchList.invisible()
         noResultLayout.visible()
+        EspressoIdlingResource.setIdleState(true)
     }
 }
