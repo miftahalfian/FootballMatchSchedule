@@ -1,9 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item type="id" name="app_bar"/>
+    <item type="id" name="toolbar"/>
     <item type="id" name="league_logo"/>
     <item type="id" name="league_name"/>
     <item type="id" name="league_id"/>
     <item type="id" name="league_desc"/>
-    <item type="id" name="toolbar"/>
+    <item type="id" name="league_alternative"/>
+    <item type="id" name="league_country"/>
+    <item type="id" name="league_formed"/>
+    <item type="id" name="league_website"/>
+    <item type="id" name="viewpager"/>
+    <item type="id" name="match_date"/>
+    <item type="id" name="match_time"/>
+    <item type="id" name="home_logo"/>
+    <item type="id" name="away_logo"/>
+    <item type="id" name="home_score"/>
+    <item type="id" name="away_score"/>
+    <item type="id" name="home_team_name"/>
+    <item type="id" name="away_team_name"/>
+    <item name="league_list" type="id"/>
+    <item name="league_name_top" type="id"/>
+    <item name="match_list" type="id"/>
+    <item name="no_result" type="id"/>
 </resources>

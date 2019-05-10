@@ -2,6 +2,9 @@ package com.solitelab.footballmatchschedule.ui.layout
 
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.support.v4.graphics.drawable.DrawableCompat
+import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -17,12 +20,11 @@ class LeagueItemUI : AnkoComponent<ViewGroup> {
     }
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
-
         cardView {
             layoutParams = FrameLayout.LayoutParams(matchParent, wrapContent).apply {
                 margin = dip(8)
             }
-            backgroundColor = Color.WHITE
+            foreground = context.getDrawable(attr(android.R.attr.selectableItemBackground).resourceId)
             isClickable = true
             radius = dip(4).toFloat()
 
@@ -30,14 +32,14 @@ class LeagueItemUI : AnkoComponent<ViewGroup> {
                 padding = dip(8)
 
                 val image = imageView {
-                     id= imgId
-                     imageResource = R.color.colorPrimary
-                     scaleType = ImageView.ScaleType.FIT_CENTER
+                    id= imgId
+                    imageResource = R.color.colorPrimary
+                    scaleType = ImageView.ScaleType.FIT_CENTER
                     transitionName = resources.getString(R.string.league_logo)
 
                 }.lparams(width= matchParent, height = dip(150)) {
-                     alignParentStart()
-                     alignParentTop()
+                    alignParentStart()
+                    alignParentTop()
 
                 }
 

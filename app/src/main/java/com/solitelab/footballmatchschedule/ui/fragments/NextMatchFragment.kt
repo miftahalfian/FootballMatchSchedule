@@ -21,8 +21,12 @@ import com.solitelab.footballmatchschedule.data.mvp.match.nextmatch.NextMatchPre
 import com.solitelab.footballmatchschedule.data.mvp.match.nextmatch.NextMatchView
 import com.solitelab.footballmatchschedule.data.mvp.model.League
 import com.solitelab.footballmatchschedule.data.mvp.model.Match
+import com.solitelab.footballmatchschedule.ui.layout.MatchList
+import com.solitelab.footballmatchschedule.ui.layout.NoResult
 import com.solitelab.footballmatchschedule.utils.invisible
 import com.solitelab.footballmatchschedule.utils.visible
+import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.support.v4.*
 
 class NextMatchFragment : Fragment(), NextMatchView {
@@ -36,7 +40,30 @@ class NextMatchFragment : Fragment(), NextMatchView {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_next_match, container, false)
+    ): View? {
+        val matchListUI = MatchList()
+        val noResultUI = NoResult()
+
+        val layout = UI {
+            relativeLayout {
+                lparams(matchParent, matchParent)
+
+                swipeContainer = ankoView({ matchListUI.createView(AnkoContext.create(it)) }, 0) {
+                }
+
+                noResultLayout = ankoView({ noResultUI.createView(AnkoContext.create(it)) }, 0) {
+                }.lparams(wrapContent, wrapContent) {
+                    centerHorizontally()
+                    centerVertically()
+                }
+
+            }
+        }.view
+
+        matchList = matchListUI.recyclerView
+
+        return layout
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,11 +71,6 @@ class NextMatchFragment : Fragment(), NextMatchView {
         val json = defaultSharedPreferences.getString("current_league", "")
         league = Gson().fromJson(json, League::class.java)
 
-        swipeContainer = find(R.id.swipeContainer)
-        matchList = find(R.id.matchList)
-        noResultLayout = find(R.id.no_result_layout)
-
-        matchList.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
         matchList.adapter = MatchAdapter {
                 match, homeLogo, awayLogo, homeSrc, awaySrc -> goToDetail(match, homeLogo, awayLogo, homeSrc, awaySrc)
         }

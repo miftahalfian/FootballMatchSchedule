@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.view.ViewCompat
 import android.support.v4.widget.SwipeRefreshLayout
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -13,17 +12,24 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.google.gson.Gson
-import com.solitelab.footballmatchschedule.ui.MatchDetailActivity
-import com.solitelab.footballmatchschedule.R
 import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
 import com.solitelab.footballmatchschedule.data.mvp.match.lastmatch.LastMatchPresenter
 import com.solitelab.footballmatchschedule.data.mvp.match.lastmatch.LastMatchView
 import com.solitelab.footballmatchschedule.data.mvp.model.League
 import com.solitelab.footballmatchschedule.data.mvp.model.Match
+import com.solitelab.footballmatchschedule.ui.MatchDetailActivity
+import com.solitelab.footballmatchschedule.ui.layout.MatchList
+import com.solitelab.footballmatchschedule.ui.layout.NoResult
+import com.solitelab.footballmatchschedule.utils.gone
 import com.solitelab.footballmatchschedule.utils.invisible
 import com.solitelab.footballmatchschedule.utils.visible
-import org.jetbrains.anko.support.v4.*
+import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.ankoView
+import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.defaultSharedPreferences
+import org.jetbrains.anko.support.v4.intentFor
+import org.jetbrains.anko.support.v4.onRefresh
 
 class LastMatchFragment : Fragment(), LastMatchView {
     private lateinit var presenter : LastMatchPresenter
@@ -35,7 +41,30 @@ class LastMatchFragment : Fragment(), LastMatchView {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_last_match, container, false)
+    ): View? {
+        val matchListUI = MatchList()
+        val noResultUI = NoResult()
+
+        val layout = UI {
+            relativeLayout {
+                lparams(matchParent, matchParent)
+
+                swipeContainer = ankoView({ matchListUI.createView(AnkoContext.create(it)) }, 0) {
+                }
+
+                noResultLayout = ankoView({ noResultUI.createView(AnkoContext.create(it)) }, 0) {
+                }.lparams(wrapContent, wrapContent) {
+                    centerHorizontally()
+                    centerVertically()
+                }
+
+            }
+        }.view
+
+        matchList = matchListUI.recyclerView
+
+        return layout
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,11 +72,6 @@ class LastMatchFragment : Fragment(), LastMatchView {
         val json = defaultSharedPreferences.getString("current_league", "")
         league = Gson().fromJson(json, League::class.java)
 
-        swipeContainer = find(R.id.swipeContainer)
-        matchList = find(R.id.matchList)
-        noResultLayout = find(R.id.no_result_layout)
-
-        matchList.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL, false)
         matchList.adapter = MatchAdapter {
                 match, homeLogo, awayLogo, homeSrc, awaySrc -> goToDetail(match, homeLogo, awayLogo, homeSrc, awaySrc)
         }
@@ -61,7 +85,7 @@ class LastMatchFragment : Fragment(), LastMatchView {
         presenter = LastMatchPresenter(this, gson, request)
         presenter.getLastMatch(league.id)
 
-        noResultLayout.invisible()
+        noResultLayout.gone()
     }
 
     private fun goToDetail(match:Match, homeLogo:ImageView, awayLogo:ImageView, homeSrc:String, awaySrc:String) {
@@ -90,7 +114,7 @@ class LastMatchFragment : Fragment(), LastMatchView {
         swipeContainer.isRefreshing = false
         (matchList.adapter as MatchAdapter).setData(matches)
         matchList.visible()
-        noResultLayout.invisible()
+        noResultLayout.gone()
     }
 
     override fun onLoadFailed() {

@@ -4,10 +4,8 @@ import android.util.Log
 
 class MatchEvent {
     var time : Int = 0
-    var type : EventType =
-        EventType.SHOT
-    var team : TeamType =
-        TeamType.HOME
+    var type : EventType = EventType.SHOT
+    var team : TeamType = TeamType.HOME
     var player : String? = null
 
     enum class EventType {

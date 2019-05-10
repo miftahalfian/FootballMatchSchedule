@@ -24,12 +24,12 @@ import com.solitelab.footballmatchschedule.data.mvp.match.MatchPresenter
 import com.solitelab.footballmatchschedule.data.mvp.match.MatchView
 import com.solitelab.footballmatchschedule.data.mvp.model.League
 import com.solitelab.footballmatchschedule.data.mvp.model.LeagueDetail
+import com.solitelab.footballmatchschedule.ui.layout.MatchUI
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_match.*
-import kotlinx.android.synthetic.main.appbar.*
 import org.jetbrains.anko.defaultSharedPreferences
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.sdk27.coroutines.onClick
+import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.startActivity
 
 class MatchActivity : AppCompatActivity(), MatchView {
@@ -37,9 +37,12 @@ class MatchActivity : AppCompatActivity(), MatchView {
     private val appActivity = this
     private var leagueDetail: LeagueDetail? = null
 
+    val ui = MatchUI()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_match)
+        //setContentView(R.layout.activity_match)
+        ui.setContentView(this)
 
         initDeclaration()
 
@@ -56,7 +59,7 @@ class MatchActivity : AppCompatActivity(), MatchView {
             league = Gson().fromJson(json, League::class.java)
         }
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(ui.toolbar)
         supportActionBar?.title = league?.name
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -66,17 +69,17 @@ class MatchActivity : AppCompatActivity(), MatchView {
         presenter.getLeagueDetail(league?.id.toString())
 
         league?.image?.let {
-            Picasso.get().load(it).into(img_league_logo)
+            Picasso.get().load(it).into(ui.leagueLogo)
         }
 
-        tv_league_name.text = league?.name
-        tv_league_alternative.text = "%s %s".format(getString(R.string.alternative), "-")
-        tv_league_country.text = "%s %s".format(getString(R.string.country), "-")
-        tv_league_formed.text = "%s %s".format(getString(R.string.formed), "-")
-        tv_league_website.text = "%s %s".format(getString(R.string.website), "-")
+        ui.leagueName.text = league?.name
+        ui.leagueAlternative.text = "%s %s".format(getString(R.string.alternative), "-")
+        ui.leagueCountry.text = "%s %s".format(getString(R.string.country), "-")
+        ui.leagueFormed.text = "%s %s".format(getString(R.string.formed), "-")
+        ui.leagueWebsite.text = "%s %s".format(getString(R.string.website), "-")
 
-        tv_league_website.onClick {
-            val text = tv_league_website.text
+        ui.leagueWebsite.onClick {
+            val text = ui.leagueWebsite.text
             val arr = text.split(":")
             var website = arr[1].trim()
 
@@ -89,9 +92,9 @@ class MatchActivity : AppCompatActivity(), MatchView {
             startActivity(intent)
         }
 
-        app_bar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, _ ->
+        ui.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, _ ->
             val offsetAlpha = (appBarLayout.y / appBarLayout.totalScrollRange)
-            toolbar.setTitleTextColor(Color.argb(((offsetAlpha * -1) * 255).toInt(), 255, 255, 255))
+            ui.toolbar.setTitleTextColor(Color.argb(((offsetAlpha * -1) * 255).toInt(), 255, 255, 255))
         })
     }
 
@@ -101,31 +104,31 @@ class MatchActivity : AppCompatActivity(), MatchView {
         tabsTitle.add("LAST MATCH")
         tabsTitle.add("NEXT MATCH")
 
-        val tabsFrament = ArrayList<Fragment>()
-        tabsFrament.add(LastMatchFragment())
-        tabsFrament.add(NextMatchFragment())
+        val tabsFragment = ArrayList<Fragment>()
+        tabsFragment.add(LastMatchFragment())
+        tabsFragment.add(NextMatchFragment())
 
-        val pageAdapter = MatchPageAdapter(supportFragmentManager, tabsFrament, tabsTitle)
-        viewpager.adapter = pageAdapter
-        viewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+        val pageAdapter = MatchPageAdapter(supportFragmentManager, tabsFragment, tabsTitle)
+        ui.viewPager.adapter = pageAdapter
+        ui.viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(ui.tabLayout))
 
-        tabs.setupWithViewPager(viewpager)
+        ui.tabLayout.setupWithViewPager(ui.viewPager)
     }
 
     override fun showLeagueDetail(detail: LeagueDetail?) {
         leagueDetail = detail
-        tv_league_alternative.text = "%s %s".format(
+        ui.leagueAlternative.text = "%s %s".format(
             getString(R.string.alternative),
             if (detail?.alternate!!.isNotEmpty()) detail.alternate else "-")
 
-        tv_league_country.text = "%s %s".format(getString(R.string.country), detail.country)
-        tv_league_formed.text = "%s %s".format(getString(R.string.formed), detail.formed)
+        ui.leagueCountry.text = "%s %s".format(getString(R.string.country), detail.country)
+        ui.leagueFormed.text = "%s %s".format(getString(R.string.formed), detail.formed)
 
         val udata = "%s %s".format(getString(R.string.website), detail.website)
         val content = SpannableString(udata)
         content.setSpan(UnderlineSpan(), 0, udata.length, 0)
 
-        tv_league_website.text = content
+        ui.leagueWebsite.text = content
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -149,8 +152,8 @@ class MatchActivity : AppCompatActivity(), MatchView {
                 if (leagueDetail != null) {
                     val options = ActivityOptions.makeSceneTransitionAnimation(
                         appActivity,
-                        img_league_logo,
-                        ViewCompat.getTransitionName(img_league_logo)
+                        ui.leagueLogo,
+                        ViewCompat.getTransitionName(ui.leagueLogo)
                     )
                     startActivity(intentFor<LeagueDetailActivity>("league" to leagueDetail), options.toBundle())
                 }
