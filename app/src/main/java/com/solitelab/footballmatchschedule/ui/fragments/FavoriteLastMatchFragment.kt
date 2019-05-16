@@ -115,7 +115,7 @@ class FavoriteLastMatchFragment : Fragment(), FavoriteMatchView {
             matchList.gone()
             noResultLayout.visible()
         }
-        EspressoIdlingResource.setIdleState(false)
+        EspressoIdlingResource.setIdleState(true)
     }
 
     override fun onResume() {

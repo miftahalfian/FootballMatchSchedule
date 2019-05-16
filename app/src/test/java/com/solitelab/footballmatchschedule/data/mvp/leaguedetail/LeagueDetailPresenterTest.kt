@@ -1,22 +1,24 @@
-package com.solitelab.footballmatchschedule.data.mvp.match.nextmatch
+package com.solitelab.footballmatchschedule.data.mvp.leaguedetail
 
 import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.TestContextProvider
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.data.mvp.model.Match
-import com.solitelab.footballmatchschedule.data.mvp.model.MatchResult
+import com.solitelab.footballmatchschedule.data.mvp.model.LeagueDetail
+import com.solitelab.footballmatchschedule.data.mvp.model.LeagueResult
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Test
+
+import org.junit.Assert.*
+import org.junit.Before
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
-class NextMatchPresenterTest {
+class LeagueDetailPresenterTest {
     @Mock
-    private lateinit var view: NextMatchView
+    private lateinit var view: LeagueDetailView
 
     @Mock
     private lateinit var gson: Gson
@@ -27,19 +29,19 @@ class NextMatchPresenterTest {
     @Mock
     private lateinit var apiResponse: Deferred<String>
 
-    private lateinit var presenter: NextMatchPresenter
+    private lateinit var presenter: LeagueDetailPresenter
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = NextMatchPresenter(view, gson, apiRepository, TestContextProvider())
+        presenter = LeagueDetailPresenter(view, gson, apiRepository, TestContextProvider())
     }
 
     @Test
-    fun getNextMatch() {
-        val matches : List<Match> = mutableListOf()
-        val response = MatchResult(matches)
-        val id = 4328
+    fun getLeagueDetail() {
+        val leagues: List<LeagueDetail> = mutableListOf()
+        val response = LeagueResult(leagues)
+        val id = "4328"
 
         runBlocking {
             Mockito.`when`(apiRepository.doRequest(ArgumentMatchers.anyString()))
@@ -50,13 +52,15 @@ class NextMatchPresenterTest {
             Mockito.`when`(
                 gson.fromJson(
                     "",
-                    MatchResult::class.java
+                    LeagueResult::class.java
                 )
             ).thenReturn(response)
 
-            presenter.getNextMatch(id)
+            presenter.getLeagueDetail(id)
 
-            Mockito.verify(view).onDataLoaded(matches)
+            if (leagues.isNotEmpty()) {
+                Mockito.verify(view).showLeagueDetail(leagues[0])
+            }
         }
     }
 }

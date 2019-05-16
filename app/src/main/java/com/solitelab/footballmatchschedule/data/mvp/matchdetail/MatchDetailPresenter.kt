@@ -12,10 +12,7 @@ import com.solitelab.footballmatchschedule.utils.toDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.db.classParser
-import org.jetbrains.anko.db.delete
-import org.jetbrains.anko.db.insert
-import org.jetbrains.anko.db.select
+import org.jetbrains.anko.db.*
 import org.jetbrains.anko.design.snackbar
 import java.util.*
 
@@ -28,7 +25,9 @@ class MatchDetailPresenter(val view : MatchDetailView) {
                 TeamResult::class.java
             )
 
-            view.onBadgeLoaded(data.teams[0].badge, tag)
+            data.teams?.let {
+                view.onBadgeLoaded(it[0].badge, tag)
+            }
         }
     }
 
@@ -44,6 +43,7 @@ class MatchDetailPresenter(val view : MatchDetailView) {
                 insert(tableName,
                     Match.ID to match.id,
                     Match.LEAGUE to match.league,
+                    Match.SPORT to match.strSport,
                     Match.DATE_EVENT to match.date,
                     Match.TIME to match.time,
                     Match.HOME_TEAM_ID to match.homeTeamID,
@@ -114,7 +114,5 @@ class MatchDetailPresenter(val view : MatchDetailView) {
         return isMatch
     }
 
-    private fun getCurrentDateTime(): Date {
-        return Calendar.getInstance().time
-    }
+    private fun getCurrentDateTime() = Calendar.getInstance().time
 }

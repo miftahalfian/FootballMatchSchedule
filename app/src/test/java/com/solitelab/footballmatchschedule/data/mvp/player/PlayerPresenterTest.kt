@@ -1,22 +1,28 @@
-package com.solitelab.footballmatchschedule.data.mvp.match.lastmatch
+package com.solitelab.footballmatchschedule.data.mvp.player
 
 import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.TestContextProvider
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.data.mvp.model.Match
-import com.solitelab.footballmatchschedule.data.mvp.model.MatchResult
+import com.solitelab.footballmatchschedule.data.mvp.model.Player
+import com.solitelab.footballmatchschedule.data.mvp.model.PlayerResult
+import com.solitelab.footballmatchschedule.data.mvp.model.Team
+import com.solitelab.footballmatchschedule.data.mvp.model.TeamResult
+import com.solitelab.footballmatchschedule.data.mvp.team.TeamPresenter
+import com.solitelab.footballmatchschedule.data.mvp.team.TeamView
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
-import org.junit.Before
 import org.junit.Test
+
+import org.junit.Assert.*
+import org.junit.Before
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 
-class LastMatchPresenterTest {
+class PlayerPresenterTest {
     @Mock
-    private lateinit var view: LastMatchView
+    private lateinit var view: PlayerView
 
     @Mock
     private lateinit var gson: Gson
@@ -27,19 +33,19 @@ class LastMatchPresenterTest {
     @Mock
     private lateinit var apiResponse: Deferred<String>
 
-    private lateinit var presenter: LastMatchPresenter
+    private lateinit var presenter: PlayerPresenter
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = LastMatchPresenter(view, gson, apiRepository, TestContextProvider())
+        presenter = PlayerPresenter(view, gson, apiRepository, TestContextProvider())
     }
 
     @Test
-    fun getLastMatch() {
-        val matches : List<Match> = mutableListOf()
-        val response = MatchResult(matches)
-        val id = 4328
+    fun getPlayers() {
+        val teamId = "133604"
+        val players : List<Player> = mutableListOf()
+        val response = PlayerResult(players)
 
         runBlocking {
             Mockito.`when`(apiRepository.doRequest(ArgumentMatchers.anyString()))
@@ -50,13 +56,13 @@ class LastMatchPresenterTest {
             Mockito.`when`(
                 gson.fromJson(
                     "",
-                    MatchResult::class.java
+                    PlayerResult::class.java
                 )
             ).thenReturn(response)
 
-            presenter.getLastMatch(id)
+            presenter.getPlayers(teamId)
 
-            Mockito.verify(view).onDataLoaded(matches)
+            Mockito.verify(view).onDataLoaded(players)
         }
     }
 }

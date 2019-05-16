@@ -32,8 +32,9 @@ class MatchAdapter(private val listener: (match:Match, homeLogo:ImageView, awayL
         private val tvHomeName : TextView = itemView.find(R.id.home_team_name)
         private val tvAwayName : TextView = itemView.find(R.id.away_team_name)
 
-        private var homeImageSrc : String = ""
-        private var awayImageSrc : String = ""
+        companion object {
+            private var teamBadgeMap: MutableMap<String, String> = mutableMapOf()
+        }
 
         fun bind(match : Match, listener: (match:Match,homeLogo:ImageView,awayLogo:ImageView,homeSrc:String, awaySrc:String) -> Unit) {
             tvLeagueName.text = match.league
@@ -45,27 +46,37 @@ class MatchAdapter(private val listener: (match:Match, homeLogo:ImageView, awayL
             }
             else tvTime.text = match.time.toDate("HH:mm:ssz").formatTo("HH:mm:ss")
 
-
             homeScore.text = if (match.homeScore == null) "-" else match.homeScore.toString()
             awayScore.text = if (match.awayScore == null) "-" else match.awayScore.toString()
             tvHomeName.text = match.homeTeamName
             tvAwayName.text = match.awayTeamName
 
-            loadTeamBadge(match.homeTeamID) {
-                homeImageSrc = it!!
-                homeImageSrc.let { it1 ->
-                    Picasso.get().load(it1).into(homeLogo)
+            if (teamBadgeMap.containsKey(match.homeTeamID)) {
+                Picasso.get().load(teamBadgeMap[match.homeTeamID]).into(homeLogo)
+            }
+            else {
+                loadTeamBadge(match.homeTeamID) {it1 ->
+                    it1?.let {
+                        teamBadgeMap.put(match.homeTeamID!!, it)
+                        Picasso.get().load(it).into(homeLogo)
+                    }
                 }
             }
-            loadTeamBadge(match.awayTeamID) {
-                awayImageSrc = it!!
-                awayImageSrc.let { it1 ->
-                    Picasso.get().load(it1).into(awayLogo)
+
+            if (teamBadgeMap.containsKey(match.awayTeamID)) {
+                Picasso.get().load(teamBadgeMap[match.awayTeamID]).into(awayLogo)
+            }
+            else {
+                loadTeamBadge(match.awayTeamID) {it1 ->
+                    it1?.let {
+                        teamBadgeMap.put(match.awayTeamID!!, it)
+                        Picasso.get().load(it).into(awayLogo)
+                    }
                 }
             }
 
             itemView.setOnClickListener {
-                listener(match, homeLogo, awayLogo, homeImageSrc, awayImageSrc)
+                listener(match, homeLogo, awayLogo, teamBadgeMap[match.homeTeamID]!!, teamBadgeMap[match.awayTeamID]!!)
             }
         }
 

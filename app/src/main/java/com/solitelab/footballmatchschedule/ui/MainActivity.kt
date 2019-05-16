@@ -67,6 +67,10 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean =
         when (item.itemId) {
+            R.id.search_btn -> {
+                startActivity<SearchActivity>()
+                true
+            }
             R.id.favorite -> {
                 startActivity<FavoriteActivity>()
                 true

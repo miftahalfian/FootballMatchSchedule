@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 
-class MatchPageAdapter(
+class PageAdapter(
     fragmentManager: FragmentManager,
     private val fragmentList : List<Fragment>,
     private val stringList: List<String>
@@ -15,5 +15,4 @@ class MatchPageAdapter(
     override fun getCount(): Int = fragmentList.size
 
     override fun getPageTitle(position: Int): CharSequence? = stringList[position]
-
 }

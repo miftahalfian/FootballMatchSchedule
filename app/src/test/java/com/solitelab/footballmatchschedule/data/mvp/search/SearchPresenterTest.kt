@@ -4,7 +4,10 @@ import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.TestContextProvider
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
 import com.solitelab.footballmatchschedule.data.mvp.model.Match
+import com.solitelab.footballmatchschedule.data.mvp.model.MatchResult
 import com.solitelab.footballmatchschedule.data.mvp.model.SearchResult
+import com.solitelab.footballmatchschedule.data.mvp.model.Team
+import com.solitelab.footballmatchschedule.data.mvp.model.TeamResult
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -16,7 +19,10 @@ import org.mockito.MockitoAnnotations
 
 class SearchPresenterTest {
     @Mock
-    private lateinit var view: SearchView
+    private lateinit var matchView: MatchSearch
+
+    @Mock
+    private lateinit var teamView: TeamSearch
 
     @Mock
     private lateinit var gson: Gson
@@ -32,14 +38,16 @@ class SearchPresenterTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        presenter = SearchPresenter(view, gson, apiRepository, TestContextProvider())
+        presenter = SearchPresenter(matchView, teamView, gson, apiRepository, TestContextProvider())
     }
 
     @Test
     fun search() {
-        val matches : List<Match> = mutableListOf()
-        val response = SearchResult(matches)
         val query = "Arsenal"
+        val matches : List<Match> = mutableListOf()
+        val teams : List<Team> = mutableListOf()
+        val matchResponse = SearchResult(matches)
+        val teamResult = TeamResult(teams)
 
         runBlocking {
             Mockito.`when`(apiRepository.doRequest(ArgumentMatchers.anyString()))
@@ -52,11 +60,19 @@ class SearchPresenterTest {
                     "",
                     SearchResult::class.java
                 )
-            ).thenReturn(response)
+            ).thenReturn(matchResponse)
+
+            Mockito.`when`(
+                gson.fromJson(
+                    "",
+                    TeamResult::class.java
+                )
+            ).thenReturn(teamResult)
 
             presenter.search(query)
 
-            Mockito.verify(view).onDataLoaded(matches)
+            Mockito.verify(matchView).onDataLoaded(matches)
+            Mockito.verify(teamView).onDataLoaded(teams)
         }
     }
 }

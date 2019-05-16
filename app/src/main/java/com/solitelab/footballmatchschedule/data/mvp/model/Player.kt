@@ -1,8 +1,16 @@
 package com.solitelab.footballmatchschedule.data.mvp.model
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
+@Parcelize
 data class Player (
+    val idPlayer: String?,
+
+    @SerializedName("strThumb")
+    val thumb: String?,
+
     @SerializedName("strPlayer")
     val name: String?,
 
@@ -39,4 +47,4 @@ data class Player (
     @SerializedName("strInstagram")
     val instagram: String?
 
-)
+) : Parcelable
