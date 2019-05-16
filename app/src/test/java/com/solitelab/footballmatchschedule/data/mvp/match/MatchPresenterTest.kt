@@ -3,8 +3,8 @@ package com.solitelab.footballmatchschedule.data.mvp.match
 import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.TestContextProvider
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.data.mvp.model.LeagueDetail
-import com.solitelab.footballmatchschedule.data.mvp.model.LeagueResult
+import com.solitelab.footballmatchschedule.data.mvp.model.Match
+import com.solitelab.footballmatchschedule.data.mvp.model.MatchResult
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -36,10 +36,10 @@ class MatchPresenterTest {
     }
 
     @Test
-    fun getLeagueDetail() {
-        val leagues: List<LeagueDetail> = mutableListOf()
-        val response = LeagueResult(leagues)
-        val id = "4328"
+    fun getLastMatch() {
+        val matches : List<Match> = mutableListOf()
+        val response = MatchResult(matches)
+        val id = 4328
 
         runBlocking {
             Mockito.`when`(apiRepository.doRequest(ArgumentMatchers.anyString()))
@@ -50,15 +50,38 @@ class MatchPresenterTest {
             Mockito.`when`(
                 gson.fromJson(
                     "",
-                    LeagueResult::class.java
+                    MatchResult::class.java
                 )
             ).thenReturn(response)
 
-            presenter.getLeagueDetail(id)
+            presenter.getLastMatch(id)
 
-            if (leagues.isNotEmpty()) {
-                Mockito.verify(view).showLeagueDetail(leagues[0])
-            }
+            Mockito.verify(view).onDataLoaded(matches, "LastMatch")
+        }
+    }
+
+    @Test
+    fun getNextMatch() {
+        val matches : List<Match> = mutableListOf()
+        val response = MatchResult(matches)
+        val id = 4328
+
+        runBlocking {
+            Mockito.`when`(apiRepository.doRequest(ArgumentMatchers.anyString()))
+                .thenReturn(apiResponse)
+
+            Mockito.`when`(apiResponse.await()).thenReturn("")
+
+            Mockito.`when`(
+                gson.fromJson(
+                    "",
+                    MatchResult::class.java
+                )
+            ).thenReturn(response)
+
+            presenter.getNextMatch(id)
+
+            Mockito.verify(view).onDataLoaded(matches, "NextMatch")
         }
     }
 }

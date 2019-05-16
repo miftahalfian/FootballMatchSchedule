@@ -1,26 +1,39 @@
 package com.solitelab.footballmatchschedule.ui
 
-import android.support.test.InstrumentationRegistry
 import android.support.test.espresso.Espresso.*
+import android.support.test.espresso.IdlingRegistry
 import android.support.test.espresso.action.ViewActions.click
+import android.support.test.espresso.action.ViewActions.scrollTo
 import android.support.test.espresso.assertion.ViewAssertions.matches
 import android.support.test.espresso.contrib.RecyclerViewActions
 import android.support.test.espresso.matcher.ViewMatchers.*
 import android.support.test.rule.ActivityTestRule
 import android.support.test.runner.AndroidJUnit4
 import android.support.v7.widget.RecyclerView
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 import com.solitelab.footballmatchschedule.R.id.*
 import com.solitelab.footballmatchschedule.Util
 import com.solitelab.footballmatchschedule.Util.withIndex
 import org.hamcrest.Matchers
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
+    val lastMatchTeamName = "Marseille"
+    val nextMatchTeamName = "Montpellier"
+    val selectedLeagueIndex = 1
+
     @Rule
     @JvmField var activityRule = ActivityTestRule(MainActivity::class.java)
+
+    @Before
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(EspressoIdlingResource.idlingResource)
+    }
 
     @Test
     fun testRecyclerViewBehaviour() {
@@ -40,17 +53,14 @@ class MainActivityTest {
     fun lastMatchFavoriteTest() {
         //klik view pada posisi 0
         onView(withId(league_list)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
-
-        //tunggu sampai loading selesai, kurang lebih 10 detik
-        Thread.sleep(10000)
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(selectedLeagueIndex, click()))
 
         //cek apakah view dengan id match_list yg ke index-0 tampil di layar
-        onView(withIndex(withId(match_list), 0))
+        onView(withId(rv_last_match))
             .check(matches(isDisplayed()))
 
         //klik view yg teksnya sama dengan Leicester
-        onView(withIndex(withText("Leicester"), 0)).perform(click())
+        onView(withIndex(withText(lastMatchTeamName), 0)).perform(click())
 
         //cek apakah tombol favorit ditampilkan di layar
         onView(withId(favorite))
@@ -62,26 +72,14 @@ class MainActivityTest {
         //pencet back (Kembali ke MatchActivity)
         pressBack()
 
-        //delay 1 detik
-        Thread.sleep(1000)
-
         //pencet back (Kembali ke MainActivity)
         pressBack()
 
-        //delay 1 detik
-        Thread.sleep(1000)
-
         //buka menu action bar
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getContext())
-
-        //delay 1 detik
-        Thread.sleep(1000)
+        openActionBarOverflowOrOptionsMenu(activityRule.activity)
 
         //pencet menu Favorite Match
         onView(withText("Favorite Match")).perform(click())
-
-        //delay 1 detik
-        Thread.sleep(1000)
 
         //cek view yang memiliki teks Leicester ditampilkan
         onView(withIndex(withId(match_list), 0)).check(
@@ -89,7 +87,7 @@ class MainActivityTest {
                 Util.hasItemm(
                     hasDescendant(
                         withText(
-                            Matchers.containsString("Leicester")
+                            Matchers.containsString(lastMatchTeamName)
                         )
                     )
                 )
@@ -101,23 +99,16 @@ class MainActivityTest {
     fun nextMatchFavoriteTest() {
         //klik view pada posisi 0
         onView(withId(league_list)).perform(
-            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click()))
+            RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(selectedLeagueIndex, click()))
 
-        //klik tab NEXT MATCH
-        onView(withText("NEXT MATCH")).perform(click())
-
-        //tunggu sampai loading selesai, kurang lebih 10 detik
-        Thread.sleep(10000)
+        onView(withId(nested_scroll)).perform(scrollTo(), click())
 
         //cek apakah view dengan id match_list yg ke index-1 tampil di layar
-        onView(withIndex(withId(match_list), 1))
+        onView(withId(rv_next_match))
             .check(matches(isDisplayed()))
 
         //lakukan aksi klik pada view dengan tulisan Liverpool
-        onView(withIndex(withText("Liverpool"), 0)).perform(click())
-
-        //delay 1 detik
-        Thread.sleep(1000)
+        onView(withIndex(withText(nextMatchTeamName), 0)).perform(click())
 
         //cek apakah tombol favorite tampil di layar
         onView(withId(favorite))
@@ -129,26 +120,14 @@ class MainActivityTest {
         //pencet back (Kembali ke MatchActivity)
         pressBack()
 
-        //delay 1 detik
-        Thread.sleep(1000)
-
         //pencet back (Kembali ke MainActivity)
         pressBack()
 
-        //delay 1 detik
-        Thread.sleep(1000)
-
         //buka menu action bar
-        openActionBarOverflowOrOptionsMenu(InstrumentationRegistry.getContext())
-
-        //delay 1 detik
-        Thread.sleep(1000)
+        openActionBarOverflowOrOptionsMenu(activityRule.activity)
 
         //pencet menu Favorite Match
         onView(withText("Favorite Match")).perform(click())
-
-        //delay 1 detik
-        Thread.sleep(1000)
 
         //lakukan aksi klik pada tab NEXT MATCH
         onView(withText("NEXT MATCH")).perform(click())
@@ -160,11 +139,16 @@ class MainActivityTest {
                 Util.hasItemm(
                     hasDescendant(
                         withText(
-                            Matchers.containsString("Liverpool")
+                            Matchers.containsString(nextMatchTeamName)
                         )
                     )
                 )
             )
         )
+    }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(EspressoIdlingResource.idlingResource)
     }
 }

@@ -19,7 +19,23 @@ object TheSportDBApi {
         return  BuildConfig.BASE_URL + "api/v1/json/${BuildConfig.TSDB_API_KEY}/searchevents.php?e=" + query
     }
 
+    fun searchTeam(query : String) : String {
+        return  BuildConfig.BASE_URL + "api/v1/json/${BuildConfig.TSDB_API_KEY}/searchteams.php?t=" + query
+    }
+
     fun getTeamDetail(id : String?) : String {
         return  BuildConfig.BASE_URL + "api/v1/json/${BuildConfig.TSDB_API_KEY}/lookupteam.php?id=" + id
+    }
+
+    fun getStandings(id: String) : String {
+        return BuildConfig.BASE_URL + "api/v1/json/${BuildConfig.TSDB_API_KEY}/lookuptable.php?l=" + id
+    }
+
+    fun getTeams(id : String?) : String {
+        return  BuildConfig.BASE_URL + "api/v1/json/${BuildConfig.TSDB_API_KEY}/lookup_all_teams.php?id=" + id
+    }
+
+    fun getPlayers(id : String?) : String {
+        return  BuildConfig.BASE_URL + "api/v1/json/${BuildConfig.TSDB_API_KEY}/lookup_all_players.php?id=" + id
     }
 }

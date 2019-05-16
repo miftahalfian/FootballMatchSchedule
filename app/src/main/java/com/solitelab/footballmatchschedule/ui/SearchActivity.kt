@@ -1,75 +1,74 @@
 package com.solitelab.footballmatchschedule.ui
 
-import android.app.ActivityOptions
 import android.os.Bundle
-import android.support.v4.view.ViewCompat
+import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.SearchView
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
 import com.google.gson.Gson
+import com.solitelab.footballmatchschedule.EspressoIdlingResource
 import com.solitelab.footballmatchschedule.R
-import com.solitelab.footballmatchschedule.data.adapter.MatchAdapter
+import com.solitelab.footballmatchschedule.data.adapter.PageAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.data.mvp.model.Match
 import com.solitelab.footballmatchschedule.data.mvp.search.SearchPresenter
-import com.solitelab.footballmatchschedule.ui.layout.MatchListUI
-import com.solitelab.footballmatchschedule.utils.invisible
-import com.solitelab.footballmatchschedule.utils.visible
+import com.solitelab.footballmatchschedule.ui.fragments.*
+import kotlinx.android.synthetic.main.activity_search.*
 import org.jetbrains.anko.appcompat.v7.coroutines.onQueryTextListener
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.setContentView
-import org.jetbrains.anko.support.v4.onRefresh
 
 
-class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.data.mvp.search.SearchView {
+class SearchActivity : AppCompatActivity() {
     private lateinit var searchItem: MenuItem
     private lateinit var searchView: SearchView
     private lateinit var presenter: SearchPresenter
-    private var queryString: String? = ""
 
-    private val ui = MatchListUI()
+    private lateinit var matchSearch : SearchMatchFragment
+    private lateinit var teamSearch : SearchTeamFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ui.setContentView(this)
+        setContentView(R.layout.activity_search)
 
+        setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "Search Football Match"
+        supportActionBar?.title = ""
 
-        val request = ApiRepository()
-        val gson = Gson()
-        presenter = SearchPresenter(this, gson, request)
-        ui.noResult.invisible()
+        matchSearch = SearchMatchFragment()
+        teamSearch = SearchTeamFragment()
 
-        ui.matchList.adapter = MatchAdapter {
-            match, homeLogo, awayLogo, homeSrc, awaySrc -> goToResult(match, homeLogo, awayLogo, homeSrc, awaySrc)
+        presenter = SearchPresenter(matchSearch, teamSearch)
+
+        matchSearch.listener = {
+            presenter.refreshSearch()
         }
 
-        ui.swipeContainer.onRefresh {
-            presenter.search(queryString)
+        matchSearch.listener = {
+            presenter.refreshSearch()
         }
+
+        initDeclaration()
 
     }
 
-    private fun goToResult(match:Match, homeLogo:ImageView, awayLogo:ImageView, homeSrc:String, awaySrc:String) {
-        val pairs = ArrayList<android.util.Pair<View, String>>()
-        val pairHome = android.util.Pair.create<View, String>(homeLogo, ViewCompat.getTransitionName(homeLogo)!!)
-        val pairAway = android.util.Pair.create<View, String>(awayLogo, ViewCompat.getTransitionName(awayLogo)!!)
-        pairs.add(pairHome)
-        pairs.add(pairAway)
+    private fun initDeclaration() {
 
-        val pairArray = pairs.toTypedArray()
+        val tabsTitle = ArrayList<String>()
+        tabsTitle.add("MATCH")
+        tabsTitle.add("TEAM")
 
-        val options = ActivityOptions
-            .makeSceneTransitionAnimation(this, *pairArray)
-        startActivity(intentFor<MatchDetailActivity>(
-            "match" to match,
-            "homeSrc" to homeSrc,
-            "awaySrc" to awaySrc
-        ), options.toBundle())
+        val tabsFragment = ArrayList<Fragment>()
+        tabsFragment.add(matchSearch)
+        tabsFragment.add(teamSearch)
+
+        val pageAdapter = PageAdapter(supportFragmentManager, tabsFragment, tabsTitle)
+        container.adapter = pageAdapter
+        container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
+
+        tabs.setupWithViewPager(container)
+
+        tabs.getTabAt(0)?.setIcon(R.drawable.ic_football_field)
+        tabs.getTabAt(1)?.setIcon(R.drawable.ic_team)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -83,8 +82,8 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
 
         searchView.onQueryTextListener {
             onQueryTextSubmit {
+                EspressoIdlingResource.setIdleState(false)
                 presenter.search(it)
-                queryString = it
                 true
             }
         }
@@ -102,24 +101,6 @@ class SearchActivity : AppCompatActivity(), com.solitelab.footballmatchschedule.
         })
 
         return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onLoadData() {
-        ui.swipeContainer.isRefreshing = true
-    }
-
-    override fun onDataLoaded(matches: List<Match>?) {
-        ui.swipeContainer.isRefreshing = false
-        (ui.matchList.adapter as MatchAdapter).clear()
-        if (matches != null) {
-            ui.matchList.visible()
-            (ui.matchList.adapter as MatchAdapter).setData(matches)
-            ui.noResult.invisible()
-        }
-        else {
-            ui.matchList.invisible()
-            ui.noResult.visible()
-        }
     }
 
 }

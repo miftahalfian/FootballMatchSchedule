@@ -12,6 +12,9 @@ data class Match (
     @SerializedName("strLeague")
     val league: String? = null,
 
+    @SerializedName("strSport")
+    val strSport: String? = null,
+
     @SerializedName("dateEvent")
     val date: String? = null,
 
@@ -87,6 +90,7 @@ data class Match (
     companion object {
         const val ID: String = "ID"
         const val LEAGUE: String = "LEAGUE"
+        const val SPORT: String = "SPORT"
         const val DATE_EVENT: String = "DATE_EVENT"
         const val TIME: String = "TIME"
         const val HOME_TEAM_ID = "HOME_TEAM_ID"

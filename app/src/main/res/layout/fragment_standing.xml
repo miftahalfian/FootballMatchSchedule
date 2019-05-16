@@ -1,0 +1,117 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="com.solitelab.footballmatchschedule.ui.fragments.StandingFragment">
+
+<android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                <LinearLayout
+                        xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                                android:text="#"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textAlignment="textEnd"
+                                android:paddingEnd="@dimen/activity_small_margin"
+                                android:layout_marginStart="@dimen/activity_small_margin"
+                                android:id="@+id/no"/>
+                        <TextView
+                                android:text="@string/team_name"
+                                android:textColor="@android:color/black"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="5"
+                                android:paddingStart="@dimen/activity_small_margin"
+                                android:id="@+id/team_name"/>
+
+                        <TextView
+                                android:text="@string/played"
+                                android:textColor="@android:color/black"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/played"/>
+
+                        <TextView
+                                android:text="@string/win"
+                                android:textColor="@android:color/black"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/win"/>
+
+                        <TextView
+                                android:text="@string/draw"
+                                android:textColor="@android:color/black"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/draw"/>
+
+                        <TextView
+                                android:text="@string/loss"
+                                android:textColor="@android:color/black"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/loss"/>
+                        <TextView
+                                android:text="@string/pts"
+                                android:textColor="@android:color/black"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:textAlignment="center"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/activity_small_margin"
+                                android:id="@+id/total"/>
+
+                </LinearLayout>
+                <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/darker_gray"
+                        android:layout_marginStart="@dimen/activity_small_margin"
+                        android:layout_marginEnd="@dimen/activity_small_margin"
+                        android:layout_marginTop="@dimen/activity_small_margin"
+                        android:layout_marginBottom="@dimen/activity_small_margin"/>
+                <android.support.v7.widget.RecyclerView
+                        android:id="@+id/rvStanding"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+        </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
+
+</FrameLayout>

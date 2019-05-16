@@ -16,14 +16,13 @@ import android.view.Menu
 import android.view.MenuItem
 import com.google.gson.Gson
 import com.solitelab.footballmatchschedule.R
-import com.solitelab.footballmatchschedule.data.adapter.MatchPageAdapter
+import com.solitelab.footballmatchschedule.data.adapter.PageAdapter
 import com.solitelab.footballmatchschedule.data.api.ApiRepository
-import com.solitelab.footballmatchschedule.ui.fragments.LastMatchFragment
-import com.solitelab.footballmatchschedule.ui.fragments.NextMatchFragment
-import com.solitelab.footballmatchschedule.data.mvp.match.MatchPresenter
-import com.solitelab.footballmatchschedule.data.mvp.match.MatchView
+import com.solitelab.footballmatchschedule.data.mvp.leaguedetail.LeagueDetailPresenter
+import com.solitelab.footballmatchschedule.data.mvp.leaguedetail.LeagueDetailView
 import com.solitelab.footballmatchschedule.data.mvp.model.League
 import com.solitelab.footballmatchschedule.data.mvp.model.LeagueDetail
+import com.solitelab.footballmatchschedule.ui.fragments.*
 import com.solitelab.footballmatchschedule.ui.layout.MatchUI
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.defaultSharedPreferences
@@ -32,8 +31,8 @@ import org.jetbrains.anko.sdk27.coroutines.onClick
 import org.jetbrains.anko.setContentView
 import org.jetbrains.anko.startActivity
 
-class MatchActivity : AppCompatActivity(), MatchView {
-    private lateinit var presenter : MatchPresenter
+class MatchActivity : AppCompatActivity(), LeagueDetailView {
+    private lateinit var presenter : LeagueDetailPresenter
     private val appActivity = this
     private var leagueDetail: LeagueDetail? = null
 
@@ -65,7 +64,7 @@ class MatchActivity : AppCompatActivity(), MatchView {
 
         val request = ApiRepository()
         val gson = Gson()
-        presenter = MatchPresenter(this, gson, request)
+        presenter = LeagueDetailPresenter(this, gson, request)
         presenter.getLeagueDetail(league?.id.toString())
 
         league?.image?.let {
@@ -101,14 +100,16 @@ class MatchActivity : AppCompatActivity(), MatchView {
     private fun initDeclaration() {
 
         val tabsTitle = ArrayList<String>()
-        tabsTitle.add("LAST MATCH")
-        tabsTitle.add("NEXT MATCH")
+        tabsTitle.add("MATCHES")
+        tabsTitle.add("STANDINGS")
+        tabsTitle.add("TEAMS")
 
         val tabsFragment = ArrayList<Fragment>()
-        tabsFragment.add(LastMatchFragment())
-        tabsFragment.add(NextMatchFragment())
+        tabsFragment.add(MatchFragment())
+        tabsFragment.add(StandingFragment())
+        tabsFragment.add(TeamFragment())
 
-        val pageAdapter = MatchPageAdapter(supportFragmentManager, tabsFragment, tabsTitle)
+        val pageAdapter = PageAdapter(supportFragmentManager, tabsFragment, tabsTitle)
         ui.viewPager.adapter = pageAdapter
         ui.viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(ui.tabLayout))
 
@@ -142,10 +143,6 @@ class MatchActivity : AppCompatActivity(), MatchView {
         when (item.itemId) {
             android.R.id.home -> {
                 finishAfterTransition()
-                true
-            }
-            R.id.search_btn -> {
-                startActivity<SearchActivity>()
                 true
             }
             R.id.detail -> {

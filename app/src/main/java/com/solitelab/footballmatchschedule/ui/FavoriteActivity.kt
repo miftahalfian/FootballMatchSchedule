@@ -6,9 +6,10 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.solitelab.footballmatchschedule.R
-import com.solitelab.footballmatchschedule.data.adapter.MatchPageAdapter
+import com.solitelab.footballmatchschedule.data.adapter.PageAdapter
 import com.solitelab.footballmatchschedule.ui.fragments.FavoriteLastMatchFragment
 import com.solitelab.footballmatchschedule.ui.fragments.FavoriteNextMatchFragment
+import com.solitelab.footballmatchschedule.ui.fragments.FavoriteTeamFragment
 import kotlinx.android.synthetic.main.activity_favorite.*
 
 class FavoriteActivity : AppCompatActivity() {
@@ -24,12 +25,14 @@ class FavoriteActivity : AppCompatActivity() {
         val tabsTitle = ArrayList<String>()
         tabsTitle.add("LAST MATCH")
         tabsTitle.add("NEXT MATCH")
+        tabsTitle.add("TEAM")
 
         val tabsFragment = ArrayList<Fragment>()
         tabsFragment.add(FavoriteLastMatchFragment())
         tabsFragment.add(FavoriteNextMatchFragment())
+        tabsFragment.add(FavoriteTeamFragment())
 
-        val pageAdapter = MatchPageAdapter(supportFragmentManager, tabsFragment, tabsTitle)
+        val pageAdapter = PageAdapter(supportFragmentManager, tabsFragment, tabsTitle)
         container.adapter = pageAdapter
 
         tabs.setupWithViewPager(container)
